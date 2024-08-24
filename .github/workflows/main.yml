@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Passo 01
-        run: echo "Execução do Build da Imagem"
+        run: ech "Execução do Build da Imagem"
       - name: Passo 02
         run: echo "Execução do Push da Imagem"
   CD:
