@@ -5,19 +5,19 @@ USER app
 WORKDIR /app
 EXPOSE 8080
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-ARG BUILD_CONFIGURATION=Release
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+ARG TARGETARCH && BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Review-Filmes.Web/Review-Filmes.Web.csproj", "Review-Filmes.Web/"]
 COPY ["Review-Filmes.Domain/Review-Filmes.Domain.csproj", "Review-Filmes.Domain/"]
-RUN dotnet restore "./Review-Filmes.Web/Review-Filmes.Web.csproj"
+RUN dotnet restore -a $TARGETARCH "./Review-Filmes.Web/Review-Filmes.Web.csproj"
 COPY . .
 WORKDIR "/src/Review-Filmes.Web"
-RUN dotnet build "./Review-Filmes.Web.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "./Review-Filmes.Web.csproj" -a $TARGETARCH -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Review-Filmes.Web.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./Review-Filmes.Web.csproj" -a $TARGETARCH -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
